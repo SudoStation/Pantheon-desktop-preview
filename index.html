@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pantheon Desktop Preview</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="desktop" class="desktop" aria-label="Pantheon desktop preview">
+    <div class="wallpaper" role="presentation"></div>
+
+    <!-- ========== Wingpanel ========== -->
+    <header class="wingpanel" role="banner">
+      <div class="wingpanel-start">
+        <button
+          type="button"
+          class="applications-btn"
+          id="applications-btn"
+          aria-expanded="false"
+          aria-controls="applications-menu"
+          title="Applications"
+        >
+          Applications
+        </button>
+      </div>
+
+      <div class="wingpanel-center">
+        <button
+          type="button"
+          class="datetime-btn"
+          id="datetime-btn"
+          aria-expanded="false"
+          aria-controls="datetime-popover"
+          aria-label="Date and time"
+        >
+          <span id="datetime-text">Sat 12:00 PM</span>
+        </button>
+      </div>
+
+      <div class="wingpanel-end" role="toolbar" aria-label="System indicators">
+        <button type="button" class="indicator-btn" id="net-btn" title="Network" aria-expanded="false" aria-controls="net-popover">
+          <img class="sym" src="assets/status/network-wired-symbolic.svg" alt="" draggable="false" />
+        </button>
+        <button type="button" class="indicator-btn" id="bt-btn" title="Bluetooth" aria-expanded="false" aria-controls="bt-popover">
+          <img class="sym" src="assets/status/bluetooth-active-symbolic.svg" alt="" draggable="false" />
+        </button>
+        <button type="button" class="indicator-btn" id="sound-btn" title="Sound" aria-expanded="false" aria-controls="sound-popover">
+          <img class="sym" src="assets/status/audio-volume-medium-symbolic.svg" alt="" draggable="false" id="sound-icon" />
+        </button>
+        <button type="button" class="indicator-btn" id="notif-btn" title="Notifications" aria-expanded="false" aria-controls="notif-popover">
+          <img class="sym" src="assets/status/notification-symbolic.svg" alt="" draggable="false" />
+        </button>
+        <button type="button" class="indicator-btn session-btn" id="session-btn" title="Session" aria-expanded="false" aria-controls="session-popover" aria-label="Session menu">
+          <img class="sym" src="assets/status/avatar-default-symbolic.svg" alt="" draggable="false" />
+        </button>
+      </div>
+    </header>
+
+    <!-- ========== Applications menu (Slingshot) ========== -->
+    <div class="app-menu" id="applications-menu" role="dialog" aria-label="Applications" hidden>
+      <div class="app-menu-toolbar">
+        <div class="view-selector" role="group" aria-label="View mode">
+          <button type="button" class="view-sel-btn active" id="view-grid-btn" title="View as Grid" aria-pressed="true">
+            <img class="sym" src="assets/actions/view-grid-symbolic.svg" alt="" draggable="false" />
+          </button>
+          <button type="button" class="view-sel-btn" id="view-category-btn" title="View by Category" aria-pressed="false">
+            <img class="sym" src="assets/actions/view-list-symbolic.svg" alt="" draggable="false" />
+          </button>
+        </div>
+        <div class="app-search-wrap">
+          <img class="sym search-icon" src="assets/actions/edit-find-symbolic.svg" alt="" draggable="false" />
+          <input
+            type="search"
+            id="app-search"
+            class="app-search"
+            placeholder="Search Apps"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search Apps"
+          />
+        </div>
+      </div>
+      <div class="app-menu-body" id="app-menu-body">
+        <aside class="app-categories" id="app-categories" hidden aria-label="Categories"></aside>
+        <div class="app-grid-wrap">
+          <div class="app-grid" id="app-grid" role="list" aria-label="Applications"></div>
+          <p class="app-empty" id="app-empty" hidden>No Results</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Datetime / calendar popover ========== -->
+    <div class="popover datetime-popover" id="datetime-popover" role="dialog" aria-label="Calendar" hidden>
+      <div class="cal-header">
+        <div class="cal-time" id="cal-time">12:00 PM</div>
+        <div class="cal-date" id="cal-date">Saturday, July 20, 2026</div>
+      </div>
+      <div class="cal-nav">
+        <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="Previous month">
+          <img class="sym" src="assets/actions/go-previous-symbolic.svg" alt="" draggable="false" />
+        </button>
+        <span class="cal-month" id="cal-month">July 2026</span>
+        <button type="button" class="cal-nav-btn" id="cal-next" aria-label="Next month">
+          <img class="sym" src="assets/actions/go-next-symbolic.svg" alt="" draggable="false" />
+        </button>
+      </div>
+      <div class="cal-weekdays" aria-hidden="true">
+        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- ========== Indicator popovers ========== -->
+    <div class="popover tray-popover" id="net-popover" role="dialog" aria-label="Network" hidden>
+      <div class="popover-title">Network</div>
+      <div class="popover-row">
+        <img class="sym" src="assets/status/network-wired-symbolic.svg" alt="" draggable="false" />
+        <div>
+          <div class="popover-name">Wired</div>
+          <div class="popover-sub">Connected</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="popover tray-popover" id="bt-popover" role="dialog" aria-label="Bluetooth" hidden>
+      <div class="popover-title">Bluetooth</div>
+      <div class="popover-row">
+        <img class="sym" src="assets/status/bluetooth-active-symbolic.svg" alt="" draggable="false" />
+        <div>
+          <div class="popover-name">Bluetooth</div>
+          <div class="popover-sub">On</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="popover tray-popover sound-popover" id="sound-popover" role="dialog" aria-label="Sound" hidden>
+      <div class="popover-title">Sound</div>
+      <div class="sound-row">
+        <img class="sym" src="assets/status/audio-volume-medium-symbolic.svg" alt="" draggable="false" id="sound-popover-icon" />
+        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60" aria-label="Volume" />
+        <span class="volume-pct" id="volume-pct">60%</span>
+      </div>
+    </div>
+
+    <div class="popover tray-popover" id="notif-popover" role="dialog" aria-label="Notifications" hidden>
+      <div class="popover-title">Notifications</div>
+      <div class="notif-empty">
+        <img class="sym" src="assets/status/notification-symbolic.svg" alt="" draggable="false" />
+        <p>No Notifications</p>
+      </div>
+    </div>
+
+    <div class="popover session-popover" id="session-popover" role="menu" aria-label="Session" hidden>
+      <button type="button" class="session-item" data-action="settings" role="menuitem">
+        <img src="assets/menu/preferences-desktop.svg" alt="" draggable="false" />
+        <span>System Settings…</span>
+      </button>
+      <div class="session-sep" role="separator"></div>
+      <button type="button" class="session-item" data-action="lock" role="menuitem">
+        <img class="sym" src="assets/status/system-lock-screen-symbolic.svg" alt="" draggable="false" />
+        <span>Lock</span>
+      </button>
+      <button type="button" class="session-item" data-action="logout" role="menuitem">
+        <img class="sym" src="assets/status/system-log-out-symbolic.svg" alt="" draggable="false" />
+        <span>Log Out…</span>
+      </button>
+      <div class="session-sep" role="separator"></div>
+      <button type="button" class="session-item" data-action="suspend" role="menuitem">
+        <img class="sym" src="assets/status/changes-prevent-symbolic.svg" alt="" draggable="false" />
+        <span>Suspend</span>
+      </button>
+      <button type="button" class="session-item" data-action="reboot" role="menuitem">
+        <img class="sym" src="assets/status/system-reboot-symbolic.svg" alt="" draggable="false" />
+        <span>Restart…</span>
+      </button>
+      <button type="button" class="session-item danger" data-action="shutdown" role="menuitem">
+        <img class="sym" src="assets/status/system-shutdown-symbolic.svg" alt="" draggable="false" />
+        <span>Shut Down…</span>
+      </button>
+    </div>
+
+    <!-- ========== Session confirm dialog ========== -->
+    <div class="session-dialog" id="session-dialog" role="dialog" aria-label="Session" hidden>
+      <div class="session-dialog-card">
+        <div class="session-dialog-icon">
+          <img class="sym" src="assets/status/system-shutdown-symbolic.svg" alt="" draggable="false" id="session-dialog-icon" />
+        </div>
+        <h2 class="session-dialog-title" id="session-dialog-title">Shut Down</h2>
+        <p class="session-dialog-msg" id="session-dialog-msg">Are you sure you want to shut down this system?</p>
+        <div class="session-dialog-actions">
+          <button type="button" class="btn btn-flat" id="session-dialog-cancel">Cancel</button>
+          <button type="button" class="btn btn-suggested" id="session-dialog-confirm">Shut Down</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Files (io.elementary.files) ========== -->
+    <div class="window fm-window" id="fm-window" role="dialog" aria-label="Files" hidden>
+      <header class="titlebar" id="fm-titlebar">
+        <div class="window-controls start">
+          <button type="button" class="wc close" id="fm-close" title="Close" aria-label="Close"></button>
+        </div>
+        <div class="titlebar-center">
+          <div class="nav-group">
+            <button type="button" class="tb-btn" id="fm-back" title="Back" aria-label="Back" disabled>
+              <img class="sym" src="assets/actions/go-previous-symbolic.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tb-btn" id="fm-forward" title="Forward" aria-label="Forward" disabled>
+              <img class="sym" src="assets/actions/go-next-symbolic.svg" alt="" draggable="false" />
+            </button>
+          </div>
+          <div class="pathbar" id="fm-pathbar">
+            <img class="path-icon" id="fm-path-icon" src="assets/places/user-home.svg" alt="" draggable="false" />
+            <span class="path-label" id="fm-path-label">Home</span>
+          </div>
+          <div class="view-switcher" role="group" aria-label="View mode">
+            <button type="button" class="tb-btn active" id="fm-view-icons" title="View as Grid" aria-pressed="true">
+              <img class="sym" src="assets/actions/view-grid-symbolic.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tb-btn" id="fm-view-list" title="View as List" aria-pressed="false">
+              <img class="sym" src="assets/actions/view-list-symbolic.svg" alt="" draggable="false" />
+            </button>
+            <button type="button" class="tb-btn" id="fm-view-columns" title="View in Columns" aria-pressed="false">
+              <img class="sym" src="assets/actions/view-column-symbolic.svg" alt="" draggable="false" />
+            </button>
+          </div>
+        </div>
+        <div class="window-controls end">
+          <button type="button" class="wc maximize" id="fm-max" title="Maximize" aria-label="Maximize"></button>
+        </div>
+      </header>
+
+      <div class="fm-body">
+        <aside class="fm-sidebar" id="fm-sidebar" aria-label="Sidebar">
+          <!-- filled by JS: Bookmarks / Storage / Network -->
+        </aside>
+        <div class="fm-main">
+          <div class="fm-content view-icons" id="fm-content" role="list">
+            <div class="fm-list-header" aria-hidden="true">
+              <span></span>
+              <span>Name</span>
+              <span>Size</span>
+              <span>Modified</span>
+            </div>
+          </div>
+          <footer class="fm-statusbar">
+            <span id="fm-status">0 items</span>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Terminal ========== -->
+    <div class="window term-window" id="term-window" role="dialog" aria-label="Terminal" hidden>
+      <header class="titlebar" id="term-titlebar">
+        <div class="window-controls start">
+          <button type="button" class="wc close" id="term-close" title="Close" aria-label="Close"></button>
+        </div>
+        <div class="titlebar-title">
+          <img src="assets/apps/utilities-terminal.svg" alt="" draggable="false" />
+          <span>Terminal</span>
+        </div>
+        <div class="window-controls end">
+          <button type="button" class="wc maximize" id="term-max" title="Maximize" aria-label="Maximize"></button>
+        </div>
+      </header>
+      <div class="term-body" id="term-body">
+        <div class="term-line"><span class="term-prompt">leon@pantheon</span>:<span class="term-path">~</span>$ <span class="term-cmd">uname -a</span></div>
+        <div class="term-line term-out">Linux pantheon 6.8.0-generic #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux</div>
+        <div class="term-line"><span class="term-prompt">leon@pantheon</span>:<span class="term-path">~</span>$ <span class="term-cmd">echo "Hello from Pantheon"</span></div>
+        <div class="term-line term-out">Hello from Pantheon</div>
+        <div class="term-line"><span class="term-prompt">leon@pantheon</span>:<span class="term-path">~</span>$ <span class="term-cursor" aria-hidden="true">█</span></div>
+      </div>
+    </div>
+
+    <!-- ========== Dock (io.elementary.dock) ========== -->
+    <footer class="dock" id="dock" role="toolbar" aria-label="Dock">
+      <div class="dock-inner">
+        <button type="button" class="dock-btn" data-app="files" id="dock-files" title="Files">
+          <img src="assets/apps/system-file-manager.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="web" id="dock-web" title="Web">
+          <img src="assets/apps/web-browser.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="mail" id="dock-mail" title="Mail">
+          <img src="assets/apps/mail.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="tasks" id="dock-tasks" title="Tasks">
+          <img src="assets/apps/tasks.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="calendar" id="dock-calendar" title="Calendar">
+          <img src="assets/apps/office-calendar.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="music" id="dock-music" title="Music">
+          <img src="assets/apps/multimedia-audio-player.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="videos" id="dock-videos" title="Videos">
+          <img src="assets/apps/multimedia-video-player.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="photos" id="dock-photos" title="Photos">
+          <img src="assets/apps/multimedia-photo-viewer.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="appcenter" id="dock-appcenter" title="AppCenter">
+          <img src="assets/apps/system-software-install.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+
+        <div class="dock-sep" aria-hidden="true"></div>
+
+        <button type="button" class="dock-btn" data-app="terminal" id="dock-terminal" title="Terminal">
+          <img src="assets/apps/utilities-terminal.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dock-btn" data-app="settings" id="dock-settings" title="System Settings">
+          <img src="assets/menu/preferences-desktop.svg" alt="" draggable="false" />
+          <span class="dock-dot" aria-hidden="true"></span>
+        </button>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
